@@ -1,0 +1,3 @@
+[submodule "nft-marketplace"]
+	path = nft-marketplace
+	url = https://github.com/Jars1987/nft-marketplace
