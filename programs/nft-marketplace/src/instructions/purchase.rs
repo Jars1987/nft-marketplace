@@ -9,6 +9,8 @@ use anchor_spl::{
         TokenAccount,
         TokenInterface,
         TransferChecked,
+        MintTo,
+        mint_to,
     },
 };
 
@@ -69,6 +71,25 @@ pub struct Purchase<'info> {
 }
 
 impl<'info> Purchase<'info> {
+    pub fn reward_buyer(&mut self) -> Result<()> {
+        let cpi_program = self.token_program.to_account_info();
+
+        let accounts = MintTo {
+            mint: self.rewards.to_account_info(),
+            authority: self.marketplace.to_account_info(),
+            to: self.taker.to_account_info(),
+        };
+
+        let seeds = &[b"marketplace", self.marketplace.name.as_bytes(), &[self.marketplace.bump]];
+        let signer_seeds = &[&seeds[..]];
+
+        let ctx = CpiContext::new_with_signer(cpi_program, accounts, signer_seeds);
+
+        mint_to(ctx, 1);
+
+        Ok(())
+    }
+
     pub fn send_sol(&mut self) -> Result<()> {
         let feeAmmount = self.listing.price
             .checked_mul(self.marketplace.fee as u64) //multiply by the fee
