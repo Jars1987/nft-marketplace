@@ -34,6 +34,7 @@ pub mod nft_marketplace {
         ctx.accounts.send_sol()?;
         ctx.accounts.transfer_nft()?;
         ctx.accounts.close_listing()?;
+        ctx.accounts.reward_buyer()?;
         Ok(())
     }
 }
